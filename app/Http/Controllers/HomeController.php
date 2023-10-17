@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Models\Category;
 use App\Models\Post;
+use App\Models\QrCode;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,6 +28,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('index');
+        return view('index', [
+            'categories' => Category::withCount('qrcode')->get()
+        ]);
     }
 }

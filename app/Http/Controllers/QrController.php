@@ -30,6 +30,42 @@ class QrController extends Controller
             'categories' => Category::all()
         ]);
     }
+    public function prints()
+    {
+        return view('qr-codes.prints', [
+            'floors' => QrCode::all()->pluck('floor'),
+            'categories' => Category::all()
+        ]);
+    }
+    public function filteredPrint(Request $request)
+    {
+        $qrcodes = QrCode::latest();
+
+        if ($request->has('title')) {
+            $search = $request->title;
+            $qrcodes->where(function ($query) use($search) {
+                $query->orWhere('title','LIKE',"%{$search}%")
+                    ->orWhere('description','LIKE',"%{$search}%");
+            });
+        }
+
+        if ($request->has('floors')) {
+            $qrcodes->whereIn('floor', $request->floors);
+        }
+
+        if ($request->has('categories')) {
+            $qrcodes->whereIn('category_id', $request->categories);
+        }
+
+        return view('qr-codes.prints-filter', [
+            'category_info' => intval($request->text_category ?? 1),
+            'title_info' => intval($request->text_title ?? 1),
+            'desc_info' => intval($request->text_desc ?? 0),
+            'floor_info' => intval($request->text_floor ?? 0),
+            'size' => intval($request->size ?? 50),
+            'qrcodes' => $qrcodes->get()
+        ]);
+    }
     public function print(QrCode $qrcode)
     {
         return view('qr-codes.print', [
@@ -65,7 +101,7 @@ class QrController extends Controller
         $qr_code->qr_code = $filename . '.png';
         $qr_code->title = $request->title;
         $qr_code->description = $request->description;
-        $qr_code->floor = $request->floor ?? '-';
+        $qr_code->floor = $request->floor ?? 'Yok';
         $qr_code->save();
 
         try {
@@ -76,7 +112,7 @@ class QrController extends Controller
                 ->eye('square')
                 ->format('png')
                 ->generate(
-                    $qr_code->description,
+                    sprintf('%s, %s, %s', $qr_code->category->name, $qr_code->title, $qr_code->description),
                     public_path('qrcodes/' . $qr_code->id . '-' . $filename . '.png')
                 );
         } catch (\Exception $e) {

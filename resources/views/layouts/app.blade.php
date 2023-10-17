@@ -37,6 +37,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
+                    @auth()
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link {{ request()->is('index') ? 'active':'' }}" href="{{ route('index') }}">
@@ -50,6 +51,7 @@
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="{{ route('qr_codes.add') }}">Ekle</a></li>
                                 <li><a class="dropdown-item" href="{{ route('qr_codes') }}">Qr Kodları</a></li>
+                                <li><a class="dropdown-item" href="{{ route('qr_codes.prints') }}">Yazdırma İşlemleri</a></li>
                             </ul>
                         </li>
                         <li class="nav-item">
@@ -58,6 +60,7 @@
                             </a>
                         </li>
                     </ul>
+                    @endauth
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
@@ -65,7 +68,7 @@
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Giriş Yap') }}</a>
                                 </li>
                             @endif
                         @else

@@ -27,8 +27,8 @@ class Category extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function posts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function qrcode(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(QrCode::class);
     }
 }
